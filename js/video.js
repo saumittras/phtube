@@ -23,7 +23,15 @@ const loadCategoriesVideo = (id) => {
   const url = `https://openapi.programming-hero.com/api/phero-tube/category/${id}`;
   fetch(url)
     .then((response) => response.json())
-    .then((videoData) => displayVideos(videoData.category))
+    .then((videoData) => {
+      // remove all button active class
+      removeActiveClass();
+
+      // add active class
+      const activeBtn = document.getElementById(`btn-${id}`);
+      activeBtn.classList.add("active");
+      displayVideos(videoData.category);
+    })
     .catch((videoError) => console.log(videoError));
 };
 
@@ -36,7 +44,7 @@ const displayCategories = (categories) => {
     // create a button
     const buttonContainer = document.createElement("div");
     buttonContainer.innerHTML = `
-      <button onclick="loadCategoriesVideo(${item.category_id})" class="btn">
+      <button id="btn-${item.category_id}" onclick="loadCategoriesVideo(${item.category_id})" class="btn ">
       ${item.category}
       </button>
     `;
@@ -45,6 +53,7 @@ const displayCategories = (categories) => {
   });
 };
 
+//Function for
 function getTimeString(time) {
   const hours = parseInt(time / 3600);
   let remainingSec = time % 3600;
@@ -53,6 +62,14 @@ function getTimeString(time) {
 
   return `${hours} hours ${min} minute ${remainingSec} second ago`;
 }
+
+const removeActiveClass = () => {
+  const buttons = document.getElementsByClassName("btn");
+  for (const btn of buttons) {
+    console.log(btn);
+    btn.classList.remove("active");
+  }
+};
 // 2. display video on the websites
 
 const displayVideos = (videos) => {
