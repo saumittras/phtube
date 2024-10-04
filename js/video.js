@@ -18,6 +18,15 @@ const loadVideos = () => {
     .catch((videoError) => console.log(videoError));
 };
 
+//3. load category videos
+const loadCategoriesVideo = (id) => {
+  const url = `https://openapi.programming-hero.com/api/phero-tube/category/${id}`;
+  fetch(url)
+    .then((response) => response.json())
+    .then((videoData) => displayVideos(videoData.category))
+    .catch((videoError) => console.log(videoError));
+};
+
 // Create DisplayCategories
 const displayCategories = (categories) => {
   const categoryContinor = document.getElementById("category");
@@ -25,12 +34,14 @@ const displayCategories = (categories) => {
     console.log(item);
 
     // create a button
-    const button = document.createElement("button");
-    button.classList = "btn";
-    button.innerText = item.category;
-
+    const buttonContainer = document.createElement("div");
+    buttonContainer.innerHTML = `
+      <button onclick="loadCategoriesVideo(${item.category_id})" class="btn">
+      ${item.category}
+      </button>
+    `;
     // add button to category section
-    categoryContinor.append(button);
+    categoryContinor.append(buttonContainer);
   });
 };
 
@@ -43,27 +54,25 @@ function getTimeString(time) {
   return `${hours} hours ${min} minute ${remainingSec} second ago`;
 }
 // 2. display video on the websites
-const demoObject = {
-  category_id: "1001",
-  video_id: "aaaa",
-  thumbnail: "https://i.ibb.co/L1b6xSq/shape.jpg",
-  title: "Shape of You",
-  authors: [
-    {
-      profile_picture: "https://i.ibb.co/D9wWRM6/olivia.jpg",
-      profile_name: "Olivia Mitchell",
-      verified: "",
-    },
-  ],
-  others: {
-    views: "100K",
-    posted_date: "16278",
-  },
-  description:
-    "Dive into the rhythm of 'Shape of You,' a captivating track that blends pop sensibilities with vibrant beats. Created by Olivia Mitchell, this song has already gained 100K views since its release. With its infectious melody and heartfelt lyrics, 'Shape of You' is perfect for fans looking for an uplifting musical experience. Let the music take over as Olivia's vocal prowess and unique style create a memorable listening journey.",
-};
+
 const displayVideos = (videos) => {
-  const videosSection = document.getElementById("videos");
+  const videoContainer = document.getElementById("videos");
+
+  if (videos.length == 0) {
+    videoContainer.classList.remove("grid");
+    videoContainer.innerHTML = `
+    <div class="min-h-[300px] flex flex-col gap-5 justify-center items-center">
+    <img src="images/Icon.png" />
+    <h2 class="text-center text-xl font-bold">
+    No Conten Here in this Category
+    </h2>
+    </div>`;
+    return;
+  } else {
+    videoContainer.classList.add("grid");
+    videoContainer.innerHTML = "";
+  }
+
   videos.forEach((video) => {
     const videoCardDiv = document.createElement("div");
     videoCardDiv.classList = "card card-compact";
@@ -75,7 +84,7 @@ const displayVideos = (videos) => {
     ${
       video.others.posted_date?.length == 0
         ? ""
-        : `<span class="absolute right-2 bottom-2 bg-black rounded p-1 text-white">${getTimeString(
+        : `<span class="absolute right-2 bottom-2 text-xs bg-black rounded p-1 text-white">${getTimeString(
             video.others.posted_date
           )}
       </span>`
@@ -103,7 +112,7 @@ const displayVideos = (videos) => {
     
   </div>
     `;
-    videosSection.append(videoCardDiv);
+    videoContainer.append(videoCardDiv);
     console.log(video);
   });
 };
