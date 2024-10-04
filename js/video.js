@@ -34,6 +34,14 @@ const displayCategories = (categories) => {
   });
 };
 
+function getTimeString(time) {
+  const hours = parseInt(time / 3600);
+  let remainingSec = time % 3600;
+  const min = parseInt(remainingSec / 60);
+  remainingSec = remainingSec % 60;
+
+  return `${hours} hours ${min} minute ${remainingSec} second ago`;
+}
 // 2. display video on the websites
 const demoObject = {
   category_id: "1001",
@@ -60,17 +68,39 @@ const displayVideos = (videos) => {
     const videoCardDiv = document.createElement("div");
     videoCardDiv.classList = "card card-compact";
     videoCardDiv.innerHTML = `
-    <figure>
-    <img class =""w-full h-full cover"
+    <figure class="h-[200px] relative">
+    <img class ="w-full h-full object-cover"
       src=${video.thumbnail}
       alt="Shoes" />
+    ${
+      video.others.posted_date?.length == 0
+        ? ""
+        : `<span class="absolute right-2 bottom-2 bg-black rounded p-1 text-white">${getTimeString(
+            video.others.posted_date
+          )}
+      </span>`
+    }
+        
   </figure>
-  <div class="card-body">
-    <h2 class="card-title">Shoes!</h2>
-    <p>If a dog chews shoes whose shoes does he choose?</p>
-    <div class="card-actions justify-end">
-      <button class="btn btn-primary">Buy Now</button>
+  <div class="px-0 py-2 flex gap-2">
+    <div>
+      <img class="w-10 h-10 rounded-full object-cover" src=${
+        video.authors[0].profile_picture
+      }/>
     </div>
+    <div>
+      <h2 class="font-bold">${video.title}</h2>
+      <div class="flex">
+      <p class="text-gray-300">${video.authors[0].profile_name}</p>
+      ${
+        video.authors[0].verified == true
+          ? '<img class="w-5 " src="https://img.icons8.com/?size=96&id=D9RtvkuOe31p&format=png" />'
+          : ""
+      }
+      </div>
+      <p></p>
+    </div>
+    
   </div>
     `;
     videosSection.append(videoCardDiv);
