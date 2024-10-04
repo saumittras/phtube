@@ -70,6 +70,29 @@ const removeActiveClass = () => {
     btn.classList.remove("active");
   }
 };
+
+// load Details function
+
+const loadDetails = async (videoId) => {
+  console.log(videoId);
+  const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`;
+  const res = await fetch(uri);
+  const data = await res.json();
+  displayDetails(data.video);
+};
+
+const displayDetails = (video) => {
+  console.log(video);
+  const detailContainer = document.getElementById("modal-content");
+  detailContainer.innerHTML = `
+  <img src=${video.thumbnail}
+  <p>${video.description}</p>
+  `;
+  customModal.showModal();
+
+  //
+};
+
 // 2. display video on the websites
 
 const displayVideos = (videos) => {
@@ -124,7 +147,9 @@ const displayVideos = (videos) => {
           : ""
       }
       </div>
-      <p></p>
+      <p> <button onclick="loadDetails('${
+        video.video_id
+      }')" class =" btn btn-sm btn-error">Details</button></p>
     </div>
     
   </div>
